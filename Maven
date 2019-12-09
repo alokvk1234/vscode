@@ -1,0 +1,160 @@
+Build Configuration tools:
+Ant
+Maven
+Gradle
+
+Maven:
+Development team can automate the project's build infrastructure in almost no time as Maven uses a standard directory layout and a defaultbuild lifecycle.
+Maven makes life of developer easy while creating reports, checks, build and
+testing automation setups.
+Maven provides developers ways to manage the following:
+ Builds
+ Documentation
+ Reporting
+ Dependencies
+ SCMs
+ Releases
+ Distribution
+ Mailing list
+
+To summarize, Maven simplifies and standardizes the project build process. It handles compilation, distribution, documentation, team collaboration and other tasks seamlessly. Maven increases reusability and takes care of most of the build related tasks.
+
+Maven project structure and contents are declared in an xml file, pom.xml, referred as Project Object Model (POM), which is the fundamental unit of the entire Maven system.
+When a Maven project is created, Maven creates default project structure. Developer is only required to place files accordingly and he/she need not to define any configuration in pom.xml. 
+In order to build the project, Maven provides developers with options to mention lifecycle goals and project dependencies (that rely on Maven plugin capabilities and on its default conventions). Much of the project management and build related tasks are maintained by Maven plugins. Developers can build any given Maven project without the need to understand how theindividual plugins work.
+
+Lifecycle phases are sub commands.
+POM is an XML file which contains project information and configuration details used to build the project.
+-Project dependencies
+-commands that can be executed
+-plugins
+-Metadata
+
+Build lifecycle and phases:
+The build lifecycle is the process of building and distributing an artifact.
+A phase is a step in build lifecycle.
+Important default phases:
+-Validate
+-Compile
+-Test
+-Package
+-Install
+not default:
+-clean
+-site
+
+To install maven:
+1. Install JDK 
+2. maven
+
+Through Root user:
+
+    1.. Install JDK8 version.
+          sudo apt-get install software-properties-common && \
+         sudo add-apt-repository ppa:webupd8team/java -y && \
+         sudo apt-get update && \
+         sudo apt-get install openjdk-8-jdk -y
+
+
+         sudo apt-get install oracle-java8-installer -y && \
+         sudo apt-get install oracle-java8-set-default 
+         #java -version
+
+
+      sudo apt-get install openjdk-8-jdk
+
+http://openjdk.java.net/install/index.html
+
+
+
+2.  install maven:
+        
+       sudo apt-add-repository ppa:andrei-pozolotin/maven3 && \
+       sudo apt-get update && \
+       sudo apt-get install maven
+	   
+How to initialise project:
+mvn archetype:generate -DgroupId=com.intellipath.app -DartifactId=ghub -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+archetype:generate - is plugin
+
+mvn -f pom.xml validate -->will validate the project.
+mvn -f pom.xml compile --> first it will validate and then compile as per build lifecycle.
+mvn clean -->will clean previous directory
+All repositories will be in cd .m2
+ls
+repository
+
+mvn clean test -->will clean old file and will validate , compile and test.
+mvn clean package -->it will validate,compile,test and package.
+once we issue this command it will download all the dependencies and these will be present in pom.xml. In pom.xml we declare public repositories from which it will download.jar file will be created.
+In realtime we cannot download plugin from repositories (maven.apache.org) since there will not be internet connection. 
+So we create our own repositories servers. Like jfrog artifact repo and nexus repo.
+All these build lifecycle can also be done in eclipse by developer. But in local server not in build server.
+If you want to store artifacts in local repo (/.m2).
+cd ~/.m2
+
+mvn clean install -->if you want to store the artifacts(jar files) in local repo (.m2). Below will be output.
+[INFO] Installing /home/ubuntu/ghub/target/ghub-1.0-SNAPSHOT.jar to /home/ubuntu/.m2/repository/com/intellipath/app/ghub/1.0-SNAPSHOT/ghub-1.0-SNAPSHOT.jar
+[INFO] Installing /home/ubuntu/ghub/pom.xml to /home/ubuntu/.m2/repository/com/intellipath/app/ghub/1.0-SNAPSHOT/ghub-1.0-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.030 s
+[INFO] Finished at: 2019-10-19T06:19:08Z
+[INFO] ----------------------------------------------------------------------
+
+mvn clean deploy -->it can build, test and can upload in local as we as remote (if remote artifact repo is set).If no repo is set it will throw below error.Upto jar file generation and 
+3 MB/s)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.111 s
+[INFO] Finished at: 2019-10-19T06:58:52Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy (default-deploy) on project ghub: Deployment failed: repository element was not specified in the POM inside distributionManagement element or in -DaltDeploymentRepository=id::layout::url parameter -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+
+Here we not mentioned artifact repo details in pom.xml. No distribution management tag in pom.xml.
+So take the distribution management tag from maven site.Go to google and type distributionManagement and you will get below code.
+<distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>corp1</id>
+      <name>Corporate Repository</name>
+      <url>scp://repo/maven2</url>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>propSnap</id>
+      <name>Propellors Snapshots</name>
+      <url>sftp://propellers.net/maven</url>
+      <layout>legacy</layout>
+    </snapshotRepository>
+	 ...
+  </distributionManagement>
+ Update above code in github and commit.
+ No we need to create artifactory repository. So download jfrog artifactory repository from google or also nexus repo also there. But jfrog repo gives lot of features.
+ Java is dependency for jfrog. First install java and later jfrog
+ 
+ Snapshot: we can redeploy.
+ Release: redeploy is not allowed.
+ libs-release_local -->physical directories but they are not accessable from maven server.So we are giving priviledges to libs_release (virtual directory).
+ Libs-release will be pointing to libs-release_local and will be accessable to external world.
+ Like libs_release_local is like private ip and libs_release is like public ip. Same applies to snapshot repository.
+ 
+ AQL is used to search,fetch. Write a query to fetch unused artifacts since 6 months. Rest API with AQL.
+ 
+ editable files should be kept in github.
+ Non editable files in jfrog and nexus.
+ 
+ Jenkins acts like integrator.
+ 
+ webhook can execute any kind of client.
+ Sonarqube-->static code analyzer

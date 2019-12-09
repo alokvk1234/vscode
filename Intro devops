@@ -1,0 +1,21 @@
+CI:
+Github (Code repository) VCS
+Jenkins CI tool
+maven
+jfrog -->storage of artifacts, artifact repository
+Sonarqube -->code quality report
+
+CD:
+Infra as a code
+Puppet, chef, Ansible,saltstack (Configuration management)
+terraform,cloudformation,pythonboto
+Docker/Kubernets(Highly available)/mesos/docker swarm
+
+CT:
+Test case as code
+Selelium (Provide platform for running test cases)
+
+CM:
+Nagios
+Splunk
+Appdynamics

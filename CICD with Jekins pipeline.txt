@@ -1,0 +1,64 @@
+1. Jenkins Pipeline Example CICD project1:
+Below code clones the code from git repository and creates a maven package and build a docker image and push that docker image to docker hub and later it will deploy the image in dev server.
+
+node{
+    stage('SCM checkout'){
+	   git credentialsId: 'git-creds', url: 'https://github.com/alokvk1234/my-app'
+     }
+	 stage('mvn package') {
+	    def mvnHome = tool name: 'maven-3', type: 'maven'
+		def mvnCMD = "${mvnHome}/bin/mvn"
+	    sh "${mvnCMD} clean package"
+	 }
+	 stage('Build Docker Image'){
+	 sh 'docker build -t alokvk1234/my-app:2.0.1 .'
+	 }
+	 stage('Push Docker Image'){
+	 withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubpwd')]) {
+      sh "docker login -u alokvk1234 -p ${dockerHubpwd}"
+     }
+	  sh 'docker push alokvk1234/my-app:2.0.1'
+	 }
+	 stage('Run Container on Dev Server'){
+	 def dockerRun = 'docker run -p 8080:8080 -d --name my-app alokvk1234/my-app:2.0.1'
+	 sshagent(['dev-server1']) {
+     sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.41.63 ${dockerRun}"
+     }
+	 }
+}
+
+2. Jenkins Pipeline Example CICD project2:
+Below code clones the code from git repo and creates maven package and deploy the package in dev server.
+
+node{
+    stage('SCM checkout'){
+	   git credentialsId: 'gitjenkins', url: 'https://github.com/alokvk1234/myweb.git'
+     }
+	 stage('mvn package') {
+	    def mvnHome = tool name: 'maven-3', type: 'maven'
+		def mvnCMD = "${mvnHome}/bin/mvn"
+	    sh "${mvnCMD} clean package"
+		sh 'mv target/*.war target/myweb.war'
+	 }
+	 stage('deploy on Dev Server'){
+	 sshagent(['tomcat-new']) {
+     sh 'scp -o StrictHostKeyChecking=no target/myweb.war ubuntu@172.31.80.116:/opt/tomcat8/webapps/'
+	 sh 'ssh ubuntu@172.31.80.116 /opt/tomcat8/bin/shutdown.sh'
+	 sh 'ssh ubuntu@172.31.80.116 /opt/tomcat8/bin/startup.sh'
+     }
+	 }
+}
+
+3. For getting parameterized builds we can use below jennkins script:
+We can generate script from pipeline syntax and properties: set job properties and select this project is parameterized. In dropdown select choice.
+
+properties([parameters([choice(choices: 'master\nfeature-1\nfeature-2', description: 'Select branch to build', name: 'branch')])])
+
+node{
+    stage('SCM Checkout'){
+        echo "Pulling changes from the branch ${params.branch}"
+        git url: 'https://github.com/alokvk1234/my-app', branch: "${params.branch}"
+    }
+}
+
+4. To set email notification go to manage jenkins -->Configure system -->E-mail Notification and configure smtp settings. Once done create a pipeline job and create a stage and generate the pipeline syntax to trigger email.

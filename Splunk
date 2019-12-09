@@ -1,0 +1,76 @@
+Splunk:
+Analytical tool to perform data collection,data indexing,searching and data analysis and representation.
+Can be integrated with varios data sources and can handle any type of analytical data.
+can grow horizontal to multiple nodes and can handle terabyte of data. 
+
+2 type of installation methood:
+1. standalone: single server and roles indexer,search head, license server and deployment server is enabled.
+2. distributed: each splunk role is enabled in dedicated server. Min number 5 servers. 2 for SH and 2 for indexer and one shared server for Deployment server,cluster master and license server.
+
+Splunk vendor provides 2 software bundle:
+1 Splunk Enterprise (roles under this are search head,indexer,cluster naster,linux server and deployment server.
+2 Splunk UF (Role is UF)
+
+Spluk roles:
+1. Forwarder -Forwarder / Universal Fowarder(UF) is small agent is installed on servers. This Forwarder can forward data to Splunkindexer.
+2. Indexer -Indexer is the Splunkcomponent which you will have to use for indexing and storing the data coming from the forwarder. Splunkinstance transforms the incoming data into events and stores it in indexes for performing search operations efficiently.
+3. Search Head -Search head is the component used for interacting with Splunk. It provides a graphical user interface to users for performing various operations. You can search and query the data stored in the Indexer by entering search words and you will get the expected result. Splunkqueries can be saved as Dashbaord/Report/Alerts inside apps in Search Head.
+4. Cluster Master / Master node -TheCluster Master / Master node manages the cluster. It coordinates the replicating activities of the peer nodes and tells the search head where to find data. It also helps manage the configuration of peer nodes and orchestrates remedial activities if a peer goes down.
+5. Distributed Management / Deployment Server –Centralized configuration Manager for Splunk enterprise instances and Universal forwarders. It distributes configuration files using deployment apps to Splunkinstances also Universal forwarders.
+SplunkArchitecture
+6. License server -This role provides options to upload Splunklicense file. It monitors consumption of License across indexers. It also has features like alerting, quota based license allocation to group of Splunkinstallation.
+
+Ports:
+Search head :      8000 Splunk web                           Inbound
+                   8089 Internal Splunk communication        Both
+Indexer:           8000 Splunk web                           Inbound
+                   8089 Internal Splunk communication        Both
+			       9997 Incoming splunk TCP from forwarders. Inbound
+Deployment server: 8000 Splunk web                           Inbound
+			       8089 Internal Splunk communication        Inbound
+Forwarder:         9997 outgoing splunk TCP                  Outbound
+                   8089 Outgoing splunk communication        Outbound
+Splunk Forwarder: one of component of splunk infra which basically acts as agent for log collection of remote machines. Collects logs from remote machines and forward them to indexer (splunk DB) for further processing and storage.
+2 types:
+1. UF: Splunk agent installed in non splunk system to gather locally, but can't parse or index data
+2. HWF Heavy weight forwarder: Full instance of splunk with advance functionality. With capabilities of remote collector, intermediate forwarder and ossible data filter because they parse data and they are not recommended for prod system.
+
+Forwarder functionalities:
+Tagging of metadata
+Configurable throttling and buffering
+data compression SSL security
+
+2 primary processes:
+Splunkd: 
+When we start splunk with ./splunk command, splunkd service gets started first and child process initiates.
+Child process –splunkweb proxy, splunkkvstore, splunkweb.
+Splunkdservice handles all splunkfeatures / process like –data indexing, searching, cluster management etc.
+Splunkdservice runs on default 8089 port with SSL.
+Splunkweb:
+Provides browser based User interface for splunkdprocess.
+Works on port number 8000.
+You can access Splunkweb page as –http://<serverip>:8000
+User name is “admin”, password –you typed while starting splunkservice.
+
+For forwarding data to splunk we need to create 2 files inputs.conf and outputs.conf.In these files we mention what is the data need to be forwarded and where dat need to be forwarded.
+2 options to manage config files.
+1. Locally in linux instance can be done by editing inputs and outputs files and making it data forward
+2. manage it from centralised location from splunk webpage for that we need to register UF with splunk. This can be done by creating deploymentclient.conf file in /opt/splunkforwarder/etc/system/local direcory of client. This will register forwarder to splunk.
+
+For any apps to work:
+1. frontend apps
+2. index 
+3. data collection
+
+Precreated apps comes with app and TA addon app. Technical addon app consists of inputs.conf which says what data need to be captured from client.
+
+
+In order to check whether our universal forwarder is registered with splunk go to settings and forwarder management.By default if we open forwarder management page it will not show any client. For this we have to create apps.
+Concept in Splunk is whatever config you want to push from splunk to UF is in the format of apps. For that we should go to deployment-apps in splunk server in /splunk/splunk/etc/ directory.In that create folder linuxlog. Once create we can see the apps in splunk web under settings/forwarder management.
+In order to make client visible in forwarder management page restart the splunk in cient where deploymentclient.conf was created in /opt/splunkforwarder/bin/
+
+Splunk base has lot of precreated apps.
+
+
+
+				   

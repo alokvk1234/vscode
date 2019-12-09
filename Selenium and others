@@ -1,0 +1,120 @@
+Jenkins Configuration as code:
+Tracking is problem with manual configuration.
+It is trackable if CaaS easily.
+
+Pipeline jobs:  
+
+To execute jenkins job we use groovy code or jenkins DSL.
+Jenkins code is already predefined using DSL. If you want to customize it then we will go for groove code.
+
+Using multi branch pipeline we can create set of pipeline projects according to detected branches in one SCM Repo.
+
+DSL Methods:
+2 ways:
+Ref library : Specific to one jenkins file. (Local Method)
+shared-library (Global method)
+
+CT:
+Selenium testing is used perform UI testing using browser.
+testcase as code.
+
+junit testing
+UI Testing -->Selenium-->Supports Java/python/c#/perl/ruby
+
+OS: win/mac/linux
+
+Functionl testing comes in CI and Unit testing under CI.
+
+Browser: Firefox,chrome,safari,opera,IE
+
+selenium components:
+1. Selenium IDE -->eclipse/intellij/visualstudio
+2. selenium server library
+3. selenium web drivers -->used to connect to browser/launch a code in browser
+4. Selenium grid can run multiple test cases simultaniously can connect to multiple nodes to run multiple tasks.
+
+once this is ready can be integarted with Maven -->testng-->selenium class or method. 
+
+Selenium  |
+client    |
+libraries |
+Javascript|
+Java      |     Jsonwire
+PHP       |====>protocol over ===>selenium ==>Browser driver (IE/Chrome/FF/Safari)===>Real Browser
+C#        |     HTTP               server
+Python    |
+
+
+
+
+
+
+
+
+How to run selenium test cases using python?
+
+Maven-->testng-->java classes/methods-->Selenium driver-->browser
+
+Java:
+Class: template /blue print of object
+Object: physical data/ Instance of class
+Variable:
+
+Oops:
+Abstraction
+Inheritance
+Encapsulation
+Polymorphism
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class selenium1 {
+
+	public static void main(String[] args) throws InterruptedException {
+		selenium1 selobj = new selenium1();
+		selobj.seltestcase1();
+		selobj.seltestcase2();
+    }
+    public void seltestcase1() throws InterruptedException {
+    	System.setProperty("webdriver.gecko.driver", "C:\\Users\\alokv\\Downloads\\geckodriver.exe");
+    	WebDriver driver=new FirefoxDriver();
+    	driver.get("https://www.google.com/");
+    	System.out.print(driver.getTitle());
+    	if(driver.getPageSource().contains("I'm Feeling Lucky")) {
+          System.out.print("test case1 success");
+    	}
+    	else {
+    		System.out.print("test case1 failure");
+    	}
+    	Thread.sleep(1200);
+    	driver.close();
+    }
+    public void seltestcase2() throws InterruptedException {
+    	System.setProperty("webdriver.gecko.driver", "C:\\Users\\alokv\\Downloads\\geckodriver.exe");
+    	WebDriver driver=new FirefoxDriver();
+    	driver.get("https://www.google.com/");
+    	System.out.print(driver.getTitle());
+    	if(driver.getPageSource().contains("I'm Feeling Lucky")) {
+          System.out.print("test case1 success");
+    	}
+    	else {
+    		System.out.print("test case1 failure");
+    	}
+    	Thread.sleep(1200);
+    	driver.close();
+    }
+}
+
+public void loginBrowser() { 
+    	System.setProperty("webdriver.gecko.driver", "C:\\Users\\alokv\\Downloads\\geckodriver.exe");
+    	WebDriver driver = new FirefoxDriver(); 
+    	driver.manage().window().maximize();
+    	driver.manage().deleteAllCookies(); 
+    	driver.manage().timeouts().pageLoadTimeout(100,TimeUnit.SECONDS); 
+    	driver.manage().timeouts().implicitlyWait(100,TimeUnit.SECONDS);
+    	driver.get("https://www.facebook.com"); 
+    	driver.findElement(By.name("email")).sendKeys("alokchinnu87@gmail.com");
+    	driver.findElement(By.name("pass")).sendKeys("kanakeri123");
+    	driver.findElement(By.id("loginbutton")).click();
+    	}
